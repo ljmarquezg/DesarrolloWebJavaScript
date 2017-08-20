@@ -8,6 +8,7 @@ numero = 0,
 resultado = 0,
 numeroTemporal = 0,
 ultimoNumero = 0,
+ultimaOperacion = ""
 operacion="",
 operador="",
 iniciarNumero = true, //Detectar si se continua escribiendo un numero.
@@ -20,7 +21,6 @@ function teclaSeleccionada(){
     tecla[i].addEventListener("mousedown",function(event){//Mientras el boton se mantiene presionado
       var valor = event.currentTarget.id
       document.getElementById(valor).style="transform:scale(0.9); opacity:0.95"
-      console.log(valor);
       validarTecla(valor, operador)
     })
 
@@ -41,14 +41,12 @@ function teclaSeleccionada(){
 
   }
 }
-console.log(ultimoNumero);
 //Identificar Tecla Seleccionada y asignarle un valor:
 function validarTecla(valor, operador){
-  console.log("Operador en validar Tecla: " +operador);
   switch (valor) {
     /*Operandos*/
     case "igual":
-    numero ="operador"
+    numero = String(numero)
     operador="igual"
     break;
 
@@ -62,31 +60,35 @@ function validarTecla(valor, operador){
     operador = "sign"
     break;
 
-    case "por":
-    numero = "operador"
-    operador = "multiplicar"
-    break;
-
-    case "mas":
-    numero = "operador"
-    operador = "sumar"
-    break;
-
-    break;
-
-    case "menos":
-    numero = "operador"
-    operador = "restar"
-    break;
-
     case "punto":
     numero = "."
     operador = ""
     break;
 
+    case "por":
+    numero = "operador"
+    operador = "multiplicar"
+    ultimaOperacion = "multiplicar"
+    break;
+
+    case "mas":
+    numero = "operador"
+    operador = "sumar"
+    ultimaOperacion = "sumar"
+    break;
+
+
+
+    case "menos":
+    numero = "operador"
+    operador = "restar"
+    ultimaOperacion = "restar"
+    break;
+
     case "dividido":
     numero = "operador"
     operador = "dividir"
+    ultimaOperacion = "dividir"
     break;
 
 
@@ -94,7 +96,6 @@ function validarTecla(valor, operador){
     case "0":
     numero = 0
     operador = ""
-
     break;
 
     case "1":
@@ -149,7 +150,6 @@ function validarTecla(valor, operador){
     numero = "No es un numero"
     break;
   }
-
   switch (operador) {
     case "":
         if(decimal == false){
@@ -204,14 +204,18 @@ function identificarOperando(numero, operador){
           }
         }
       }
-      iniciarNumero = false
+    ultimoNumero = variableTemporal
+    iniciarNumero = false
+    console.log("validarTecla Numero: " +variableTemporal);
+    console.log("Operador en validar Tecla: " +operador + "Ultima Operacion realizada: "+ ultimaOperacion);
     }
   }
 
-else if (numero == "operador") {
+else if (typeof(numero) == "string") {
   switch (operador) {
     case "igual":
-    Calculadora.ultimaOperacion(operador,numero, ultimoNumero)
+    Calculadora.ultimaOperacion(ultimaOperacion, resultado, ultimoNumero)
+    console.log("Ultimo Numero: " + ultimoNumero + " Ultima Operacion: " +ultimaOperacion + " Resultado: "+resultado + " variableTemporal" + variableTemporal);
     break;
 
     case "sign":
@@ -314,7 +318,6 @@ var Calculadora = {
     if(iniciarNumero == true){
       numeroPantalla.innerHTML = resultado
       operador = "multiplicar" //Guardar ultima Operacion
-      //ultimoNumero = variableTemporal
     }else {
       resultado = Number(numero) * Number(resultado)
       iniciarNumero = true;
@@ -328,7 +331,6 @@ var Calculadora = {
     if(iniciarNumero == true){
       numeroPantalla.innerHTML = resultado
       operador = "dividir" //Guardar ultima Operacion
-      //ultimoNumero = variableTemporal
     }else {
       resultado = Number(resultado) / Number(numero)
       iniciarNumero = true;
@@ -337,9 +339,26 @@ var Calculadora = {
       operador = "dividir" //Guardar ultima Operacion
     }
   },
-  ultimaOperacion: function(operador, numero){
-    console.log("Operador: "+operador + " Numero: " + numero);
+  ultimaOperacion: function(ultimaOperacion, resultado, ultimoNumero){
+    console.log(ultimoNumero);
+    switch (ultimaOperacion) {
+      case "sumar":
+      Calculadora.sumar(ultimoNumero)
+      break;
+
+      case "restar":
+      Calculadora.restar(ultimoNumero)
+      break;
+
+      case "multiplicar":
+      Calculadora.multiplicar(ultimoNumero)
+      break;
+
+      case "dividir":
+      Calculadora.dividir(ultimoNumero)
+      break;
+    }
   }
 }
-
+console.log("Operador: "+operador + " Ultimo Numero: " + ultimoNumero + " Resultado: " + resultado);
 Calculadora.init();

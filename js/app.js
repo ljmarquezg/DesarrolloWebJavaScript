@@ -13,6 +13,7 @@ operacion="",
 operador="",
 iniciarNumero = true, //Detectar si se continua escribiendo un numero.
 decimal = false
+operacionCompletada = false
 
 //Asignar valores con eventos de mouse
 function teclaSeleccionada(){
@@ -43,6 +44,7 @@ function teclaSeleccionada(){
 }
 //Identificar Tecla Seleccionada y asignarle un valor:
 function validarTecla(valor, operador){
+
   switch (valor) {
     /*Operandos*/
     case "igual":
@@ -152,27 +154,35 @@ function validarTecla(valor, operador){
   }
   switch (operador) {
     case "":
-        if(decimal == false){
-          if ((numeroPantalla.innerHTML).length < 8){
-            identificarOperando(numero, operador)
-          }else{
-            alert("Has alcanzado el numero maximo de caracteres permitidos")
-          }
-        }else{
-          if ((numeroPantalla.innerHTML).length < 9){
-            identificarOperando(numero, operador)
-          }else{
-            alert("Has alcanzado el numero maximo de caracteres permitidos")
-          }
-        }
-      break;
+    if(decimal == false){
+      if ((numeroPantalla.innerHTML).length < 8){
+        identificarOperando(numero, operador)
+      }else{
+        alert("Has alcanzado el numero maximo de caracteres permitidos")
+      }
+    }else{
+      if ((numeroPantalla.innerHTML).length < 9){
+        identificarOperando(numero, operador)
+      }else{
+        alert("Has alcanzado el numero maximo de caracteres permitidos")
+      }
+    }
+    break;
     default:
     identificarOperando(numero, operador)
   }
-
 }
 
 function identificarOperando(numero, operador){
+
+  if (operacionCompletada == true) { //Verificar que la ultima cadena de operaciones ha terminado
+    if (typeof(numero) == "number"){
+      resultado = 0
+      operacionCompletada = false
+    }else if(typeof(numero) == "string"){//Si se selecciona un operador, el no se reiniciará el resultado
+      operacionCompletada = false
+    }
+}
   if ((typeof(numero) == 'number' || numero == ".")){
     if (numero == 0 && numeroPantalla.innerHTML == 0){
       console.log("Debe seleccionar un numero distinto de 0");
@@ -204,57 +214,60 @@ function identificarOperando(numero, operador){
           }
         }
       }
-    ultimoNumero = variableTemporal
-    iniciarNumero = false
-    console.log("validarTecla Numero: " +variableTemporal);
-    console.log("Operador en validar Tecla: " +operador + "Ultima Operacion realizada: "+ ultimaOperacion);
+      ultimoNumero = variableTemporal
+      iniciarNumero = false
+      console.log("validarTecla Numero: " +variableTemporal);
+      console.log("Operador en validar Tecla: " +operador + "Ultima Operacion realizada: "+ ultimaOperacion);
     }
   }
 
-else if (typeof(numero) == "string") {
-  switch (operador) {
-    case "igual":
-    Calculadora.ultimaOperacion(ultimaOperacion, resultado, ultimoNumero)
-    console.log("Ultimo Numero: " + ultimoNumero + " Ultima Operacion: " +ultimaOperacion + " Resultado: "+resultado + " variableTemporal" + variableTemporal);
-    break;
+  else if (typeof(numero) == "string") {
+    switch (operador) {
+      case "igual":
+      Calculadora.ultimaOperacion(ultimaOperacion, resultado, ultimoNumero)
+      console.log("Ultimo Numero: " + ultimoNumero + " Ultima Operacion: " +ultimaOperacion + " Resultado: "+resultado + " variableTemporal" + variableTemporal);
+      numeroPantalla.innerHTML = resultado
+      break;
 
-    case "sign":
-    variableTemporal = Number(-variableTemporal)
-    numeroPantalla.innerHTML = variableTemporal
-    break;
+      case "sign":
+      variableTemporal = Number(-variableTemporal)
+      numeroPantalla.innerHTML = variableTemporal
+      break;
 
-    case "sumar":
-    numero = variableTemporal
-    Calculadora.sumar(numero)
-    break;
+      case "sumar":
+      numero = variableTemporal
+      decimal = false
+      Calculadora.sumar(numero)
+      break;
 
-    case "restar":
-    numero = variableTemporal
-    Calculadora.restar(numero)
-    break;
+      case "restar":
+      numero = variableTemporal
+      Calculadora.restar(numero)
+      break;
 
-    case "multiplicar":
-    numero = variableTemporal
-    Calculadora.multiplicar(numero)
-    break;
+      case "multiplicar":
+      numero = variableTemporal
+      Calculadora.multiplicar(numero)
+      break;
 
-    case "dividir":
-    numero = variableTemporal
-    Calculadora.dividir(numero)
-    break;
+      case "dividir":
+      numero = variableTemporal
+      Calculadora.dividir(numero)
+      break;
 
-    case "reiniciar":
-    Calculadora.reiniciarCalculadora()
-    console.log(" 4 - REINICIAR CALCULADORA reiniciando");
-    break;
-    default:
+      case "reiniciar":
+      Calculadora.reiniciarCalculadora()
+      console.log(" 4 - REINICIAR CALCULADORA reiniciando");
+      break;
+      default:
+    }
+
+
+  }else{
+    alert("No es un numero")
   }
-
-
-}else{
-  alert("No es un numero")
 }
-}
+
 var Calculadora = {
   //Definicion de Variable
   init:function(){
@@ -288,14 +301,12 @@ var Calculadora = {
 
   sumar: function(numero){
     if(iniciarNumero == true){
-      numeroPantalla.innerHTML = resultado
-      operador = "sumar" //Guardar ultima Operacion
-      //ultimoNumero = variableTemporal
+      numeroPantalla.innerHTML = numero
     }else {
       resultado =  Number(resultado) + Number(numero)
+      variableTemporal = "";
       iniciarNumero = true;
-      variableTemporal = 0;
-      numeroPantalla.innerHTML = resultado;
+      numeroPantalla.innerHTML = variableTemporal;
       operador = "sumar" //Guardar ultima Operacion
     }
   },
@@ -308,7 +319,7 @@ var Calculadora = {
     }else {
       resultado = Number(resultado) - Number(numero)
       iniciarNumero = true;
-      variableTemporal = 0;
+      variableTemporal = "";
       numeroPantalla.innerHTML = resultado;
       operador = "restar" //Guardar ultima Operacion
     }
@@ -321,7 +332,7 @@ var Calculadora = {
     }else {
       resultado = Number(numero) * Number(resultado)
       iniciarNumero = true;
-      variableTemporal = 0;
+      variableTemporal = "";
       numeroPantalla.innerHTML = resultado;
       operador = "multiplicar" //Guardar ultima Operacion
     }
@@ -334,31 +345,39 @@ var Calculadora = {
     }else {
       resultado = Number(resultado) / Number(numero)
       iniciarNumero = true;
-      variableTemporal = 0;
+      variableTemporal = "";
       numeroPantalla.innerHTML = resultado;
       operador = "dividir" //Guardar ultima Operacion
     }
   },
-  ultimaOperacion: function(ultimaOperacion, resultado, ultimoNumero){
-    console.log(ultimoNumero);
-    switch (ultimaOperacion) {
-      case "sumar":
-      Calculadora.sumar(ultimoNumero)
-      break;
+  ultimaOperacion: function(ultimaOperacion, resultado, numero){
+    if(variableTemporal == ""){
+      console.log("Esperando parametros")
+      iniciarNumero = false
+    }else{
 
-      case "restar":
-      Calculadora.restar(ultimoNumero)
-      break;
-
-      case "multiplicar":
-      Calculadora.multiplicar(ultimoNumero)
-      break;
-
-      case "dividir":
-      Calculadora.dividir(ultimoNumero)
-      break;
     }
-  }
+    /*console.log(ultimoNumero);
+    switch (ultimaOperacion) {
+    case "sumar":*/
+    this.sumar(numero)
+    /*break;
+
+    case "restar":
+    Calculadora.restar(ultimoNumero)
+    break;
+
+    case "multiplicar":
+    Calculadora.multiplicar(ultimoNumero)
+    break;
+
+    case "dividir":
+    Calculadora.dividir(ultimoNumero)
+    break;
+  }*/
+  console.log("Operador: "+operador + " Ultimo Numero: " + ultimoNumero + " Resultado: " + resultado);
+  operacionCompletada = true
+  console.log(resultado + " Operador: " +operador);
 }
-console.log("Operador: "+operador + " Ultimo Numero: " + ultimoNumero + " Resultado: " + resultado);
+}
 Calculadora.init();

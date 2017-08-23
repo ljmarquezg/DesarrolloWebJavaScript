@@ -1,15 +1,14 @@
 var Calculadora = {
-  //Inicializar las varriables
+  /*Inicializar las variables*/
   numeroPantalla : document.getElementById('display'),
-  variableTemporal : 0,
   tecla : document.getElementsByClassName('tecla'),
   valor : "", //Guarda el valor de la tecla seleccionada
-  numero: "vacio", //Guarda el ultimo resultado
-  ultimoNumero:0, //Guarda el último numero guardado
-  resultado : "", //Guarda el resultado
-  operacion:"", //Operacion actual
   operador:"", //Define el tipo de variable numérica || caracteres
+  operacion:"", //Operacion actual
+  resultado : "", //Guarda el resultado
+  numero: "vacio", //Guarda el ultimo resultado
   ultimaOperacion : "", //Guarda la última operación realizada
+  variableTemporal : 0,
   decimal : false, //Define si el numero es decimal.
   iniciarNumero : true, //Define si se continua escribiendo un número o se espera nuevo parámetros.
   operacionCompletada : true, //Detercta si se han completado todas las operaciones.
@@ -25,16 +24,13 @@ var Calculadora = {
   reiniciarCalculadora:function(){
     /*Reiniciar todos los parámetros*/
     Calculadora.numeroPantalla.innerHTML = 0,
-    Calculadora.variableTemporal = "",
-    Calculadora.numeroTemporal = 0,
-    Calculadora.numero = "vacio",
-    Calculadora.ultimoNumero = 0,
-    Calculadora.resultado = "",
-    Calculadora.iniciarNumero = true,
     Calculadora.valor="",
-    Calculadora.operacion="",
     Calculadora.operador="",
+    Calculadora.operacion="",
+    Calculadora.resultado = "",
+    Calculadora.numero = "vacio",
     Calculadora.ultimaOperacion = "",
+    Calculadora.variableTemporal = "",
     Calculadora.decimal = false ,
     Calculadora.iniciarNumero = true,
     Calculadora.operacionCompletada = false ;
@@ -75,7 +71,7 @@ var Calculadora = {
     }
   },
 
-  validarTecla:function(valor) //Identificar Tecla Seleccionada y asignarle un valor:
+  validarTecla:function(valor) /*Identificar Tecla Seleccionada y asignarle un valor:*/
   {
     switch (valor) {
       /*Operandos*/
@@ -183,7 +179,7 @@ var Calculadora = {
       break;
     }
 
-    if ((typeof(numero) == 'number' || numero == ".")){ //Obtener el valor del numero o decimal seleccionado
+    if ((typeof(numero) == 'number' || numero == ".")){ /*Obtener el valor del numero o decimal seleccionado*/
       if (Calculadora.numeroPantalla.innerHTML.length < 8){//Limitar el operando a un maximo de 8 caracteres
         /*Determinar si la tecla presionada es un numero o un operador*/
         if (Calculadora.iniciarNumero == true && Calculadora.operacionCompletada == true){ //Si la operacion ha completado y se ingresa un nuevo numero
@@ -223,7 +219,7 @@ var Calculadora = {
           Calculadora.iniciarNumero = false
         }
       }else{
-        //Mostrar mensaje en cónsola
+        /*Mostrar mensaje en cónsola*/
         console.log("Ha ingresado el numero máximo de caracteres permitidos");
       }
     }
@@ -238,7 +234,7 @@ var Calculadora = {
 
         case "=":
         Calculadora.iniciarNumero = true //Se inicia un nuevo operando
-        Calculadora.realizarOperacion(operador,Calculadora.ultimaOperacion) //Se envia como parámetro el operador ""=""  mas la ultima operación arigmática realizada
+        Calculadora.realizarOperacion(operador) //Se envia como parámetro el operador ""=""  mas la ultima operación arigmática realizada
         Calculadora.decimal = false //Deshabilitar el estado decimal
         break;
 
@@ -268,7 +264,7 @@ var Calculadora = {
           Calculadora.operacionCompletada = false //Indicar que la operacion no ha sido completada
           Calculadora.ultimaOperacion = operador //Reemplazar la ultima operacion por la operacion actual
         }else{
-          Calculadora.realizarOperacion(operador, operador) // se envian los parametros de operador y la operacion acual
+          Calculadora.realizarOperacion(operador) // se envian los parametros de operador y la operacion acual
           Calculadora.operacionCompletada = false //Definir que la operacion no ha sido completada
           Calculadora.decimal = false //Iniciar el nuevo operando sin propiedad decimal
         }
@@ -276,17 +272,13 @@ var Calculadora = {
     }
   },
 
-  realizarOperacion: function(operador, operadorCalculadora) {
-    Calculadora.ultimoNumero = Calculadora.variableTemporal
-    /*Si el operando es "=" Verivicar que no hayan operaciones pendientes*/
-    if(operador== "=" && Calculadora.iniciarNumero==true){
-      this.verificarOperacion(operadorCalculadora) //realizar la operación con utilizando la última operacion realizada
-      Calculadora.resultado = resultado //Asignar el resultado como primer parametros
+  realizarOperacion: function(operador) {
+    this.verificarOperacion() /*realizar el cálculo de la operación*/
+    if(operador== "="){
       Calculadora.numeroPantalla.innerHTML = Calculadora.resultado //mostrar en pantalla el valor del resultado
       Calculadora.operacionCompletada = true //Indicar que la operacion ha completado
       Calculadora.iniciarNumero = true //Se espera nuevo operando
     }else{
-      this.verificarOperacion(operador) //si hay operaciones pendientes se realizan primero
       Calculadora.variableTemporal = "" //Variable Temporal Vacia.
       Calculadora.ultimaOperacion = operador //Asignar el valor de la íltima operación seleccionada.
     }
@@ -294,20 +286,13 @@ var Calculadora = {
     Calculadora.ajustarResultado() //Verificar que el resultado no sea mayor de 8 caracteres
   },
 
-  verificarOperacion: function(operador){
+  verificarOperacion: function(){
     if(Calculadora.numero == "vacio") { //La calculadora se ha reiniciado
       Calculadora.resultado = Calculadora.variableTemporal
     }else{
-      if(Calculadora.operacionCompletada == true){ /*Verificar que no hayan operaciones completas*/
-        operaciones="("+ Calculadora.numero+ ")" +operador+ "(" +Calculadora.variableTemporal+ ")"; // escribimos la operación en una cadena de caracteres
-        resultado=eval(operaciones) //convertimos la cadena a código y resolvemos
-        Calculadora.resultado=resultado; //guardamos la solución
-        //console.log(Calculadora.resultado+operador+Calculadora.variableTemporal+"="+resultado);
-      }else{
-        operaciones="(" +Calculadora.numero+ ")" +Calculadora.ultimaOperacion+ "(" +Calculadora.variableTemporal+ ")"; // escribimos la operación en una cadena de caracteres
-        resultado=eval(operaciones) //convertimos la cadena a código y resolvemos
-        Calculadora.resultado=resultado; //Guardamos la solución
-      }
+      operaciones="(" +Calculadora.numero+ ")" +Calculadora.ultimaOperacion+ "(" +Calculadora.variableTemporal+ ")"; // escribimos la operación en una cadena de caracteres
+      resultado=eval(operaciones) //convertimos la cadena a código y resolvemos
+      Calculadora.resultado=resultado; //Guardamos la solución
       console.log(operaciones+"="+resultado); //Mostrar operación en pantalla
     }
   },

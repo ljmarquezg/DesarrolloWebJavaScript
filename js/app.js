@@ -14,7 +14,8 @@ var Calculadora = {
   iniciarNumero : true, //Define si se continua escribiendo un número o se espera nuevo parámetros.
   operacionCompletada : true, //Detercta si se han completado todas las operaciones.
 
-  init:function(){ //Iniciar las funciones al cargar la pagina
+  /*Iniciar las funciones al cargar la pagina*/
+  init:function(){
     //Eventos del Mouse
     this.eventosMouse()
     //Iniciar los valores de las variables
@@ -22,6 +23,7 @@ var Calculadora = {
   },
 
   reiniciarCalculadora:function(){
+    /*Reiniciar todos los parámetros*/
     Calculadora.numeroPantalla.innerHTML = 0,
     Calculadora.variableTemporal = "",
     Calculadora.numeroTemporal = 0,
@@ -50,7 +52,7 @@ var Calculadora = {
         Calculadora.validarTecla(valor, Calculadora.operador)
       })
 
-      //Evento posición del mouse esta fuera del area de una tecla
+      /*Evento posición del mouse esta fuera del area de una tecla*/
       this.tecla[i].addEventListener("mouseout",function(event)
       {
         var valor = event.currentTarget.id
@@ -77,7 +79,6 @@ var Calculadora = {
   {
     switch (valor) {
       /*Operandos*/
-
       case "igual": //Boton Igual
       numero = String(numero) //Convertir el numero en cadena de caracteres
       operador="=" //Definir el tipo de operador
@@ -96,8 +97,8 @@ var Calculadora = {
       break;
 
       case "raiz":
-      numero = "operador"
-      operador = "raiz"
+      numero = "operador" //Convertir el numero en operador
+      operador = "raiz" //Operacion raiz
       break;
 
       case "sign":
@@ -137,7 +138,6 @@ var Calculadora = {
       operador = "" //No es un operador
       break;
 
-
       case  "2":
       numero = 2 //Valor numérico
       operador="" //No es un operador
@@ -147,7 +147,6 @@ var Calculadora = {
       numero = 3 //Valor numérico
       operador="" //No es un operador
       break;
-
 
       case "4":
       numero = 4 //Valor numérico
@@ -163,7 +162,6 @@ var Calculadora = {
       numero = 6 //Valor numérico
       operador = "" //No es un operador
       break;
-
 
       case "7":
       numero = 7 //Valor numérico
@@ -191,10 +189,12 @@ var Calculadora = {
         if (Calculadora.iniciarNumero == true && Calculadora.operacionCompletada == true){ //Si la operacion ha completado y se ingresa un nuevo numero
           Calculadora.reiniciarCalculadora() //reiniciar los valores de la calculadora
         }
-        if (numero == 0 && Calculadora.numeroPantalla.innerHTML == 0){ //Obtener el valor de la tecla seleccionada y el numero en pantalla.
+        /*Obtener el valor de la tecla seleccionada y el numero en pantalla.*/
+        if (numero == 0 && Calculadora.numeroPantalla.innerHTML == 0){
           console.log("Debe seleccionar un numero distinto de 0"); //Si ambos son 0 Mostrar mensaje en cónsola si el numero es 0
         }else{
-          if (Calculadora.numeroPantalla.innerHTML == 0 || Calculadora.iniciarNumero == true){ //Verificar si el número es 0 o y es un nuevo numero
+          /*Verificar si el número es 0 o y es un nuevo numero*/
+          if (Calculadora.numeroPantalla.innerHTML == 0 || Calculadora.iniciarNumero == true){
             Calculadora.variableTemporal += String(numero) //Convertir en cadena la cadena de teclas seleccionadas
             Calculadora.variableTemporal = Number(Calculadora.variableTemporal) //Convertir en Numero la cadena de teclas para realizar operaciones arigméticas
             Calculadora.numeroPantalla.innerHTML = Number(Calculadora.variableTemporal) //Mostrar en pantalla el valor de la cadena numerica
@@ -204,166 +204,146 @@ var Calculadora = {
               Calculadora.decimal = true //Activar el modo decimal
             }
           }else{
-            if (numero == "." && Calculadora.decimal == false){ //Verificar si la tecla seleccionada es "." y el número no es decimal
-            Calculadora.variableTemporal += String(numero) //Convertir en cadena de caracteres los operandos actuales
-            Calculadora.numeroPantalla.innerHTML = String(Calculadora.variableTemporal) //Mostrar la cadena de caracteres en pantalla
-            Calculadora.decimal = true  //Iniciar el estado decimal
-          }else{
-            if(numero == "." && Calculadora.decimal==true){ //Verificar si la tecla seleccionada es "." y ya el numero es decimal
-            console.log("No puede agregar mas comas al numero");
-          }else{
-            Calculadora.variableTemporal +=String(numero)
-            Calculadora.numeroPantalla.innerHTML = Number(Calculadora.variableTemporal)
+            /*Verificar si la tecla seleccionada es "." y el número no es decimal*/
+            if (numero == "." && Calculadora.decimal == false){
+              Calculadora.variableTemporal += String(numero) //Convertir en cadena de caracteres los operandos actuales
+              Calculadora.numeroPantalla.innerHTML = String(Calculadora.variableTemporal) //Mostrar la cadena de caracteres en pantalla
+              Calculadora.decimal = true  //Iniciar el estado decimal
+            }else{
+              /*Verificar si la tecla seleccionada es "." y ya el número es decimal*/
+              if(numero == "." && Calculadora.decimal==true){
+                console.log("No puede agregar mas comas al numero");
+              }else{
+                Calculadora.variableTemporal +=String(numero)
+                Calculadora.numeroPantalla.innerHTML = Number(Calculadora.variableTemporal)
+              }
+            }
           }
+          /*Verificar si se pueden seguir agregando numeros al operador*/
+          Calculadora.iniciarNumero = false
+        }
+      }else{
+        //Mostrar mensaje en cónsola
+        console.log("Ha ingresado el numero máximo de caracteres permitidos");
+      }
+    }
+
+    /*Si el numero es operando*/
+    if (typeof(numero) == "string") {
+      switch (operador) {
+        case "sign":
+        operador =""
+        Calculadora.cambiarSigno() //Ejecutar función cambiar de signo
+        break;
+
+        case "=":
+        Calculadora.iniciarNumero = true //Se inicia un nuevo operando
+        Calculadora.realizarOperacion(operador,Calculadora.ultimaOperacion) //Se envia como parámetro el operador ""=""  mas la ultima operación arigmática realizada
+        Calculadora.decimal = false //Deshabilitar el estado decimal
+        break;
+
+        case "on":
+        console.log("Reiniciar Parámetros"); //Mostrar mensaje en cónsola
+        break;
+
+        case "raiz":
+        if (Calculadora.numeroPantalla.innerHTML >=0){ //Verificar que el número sea igual o mayor que 0
+          Calculadora.raiz()
+        }else{
+          Calculadora.numeroPantalla.innerHTML = "ERROR" //Mostrar mensaje de error
+          console.log("No se puede calcular la raiz cuadrada de un numero negativo"); //Mostrar Mensaje en Cónsola
+        }
+        break;
+
+        case ".":
+        console.log("decimal Habilitado"); //Mosrtar en cónsola activación del módulo decimal
+        break;
+
+        default: //Valor suma || resta || multiplicar  || dividir
+        Calculadora.numeroPantalla.innerHTML = "" //Mostrar pantalla vacia para iniciar nuevo operando
+        Calculadora.iniciarNumero = true //Se inicia un nuevo operando
+        /*Condicional para permitir agregar mas operandos luego de presionar el boton igual*/
+        if(Calculadora.iniciarNumero == true && Calculadora.operacionCompletada == true && operador != "="){ //Verificar que se espera una nueva entrada, la ultima operacion ha terminado y la tecla seleccionada es diferente a igual
+          Calculadora.variableTemporal = ""; //Vaciar variable temporal
+          Calculadora.operacionCompletada = false //Indicar que la operacion no ha sido completada
+          Calculadora.ultimaOperacion = operador //Reemplazar la ultima operacion por la operacion actual
+        }else{
+          Calculadora.realizarOperacion(operador, operador) // se envian los parametros de operador y la operacion acual
+          Calculadora.operacionCompletada = false //Definir que la operacion no ha sido completada
+          Calculadora.decimal = false //Iniciar el nuevo operando sin propiedad decimal
         }
       }
-      //ultimoNumero = variableTemporal
-      Calculadora.iniciarNumero = false //El Se pueden seguir agregando numeros al operador
     }
-  }else{
-    console.log("Ha ingresado el numero máximo de caracteres permitidos"); //Mostrar mensaje en cónsola
-  }
-}
+  },
 
-/*Si el numero es operando*/
-if (typeof(numero) == "string") {
-  switch (operador) {
-    case "sign":
-    operador =""
-    Calculadora.cambiarSigno() //Ejecutar función cambiar de signo
-    console.log("Cambiar Signo:" +Calculadora.ultimoNumero);
-    break;
-
-    case "=":
-    Calculadora.iniciarNumero = true //Se inicia un nuevo operando
-    Calculadora.realizarOperacion(operador,Calculadora.ultimaOperacion) //Se envia como parámetro el operador ""=""  mas la ultima operación arigmática realizada
-    Calculadora.decimal = false //Deshabilitar el estado decimal'
-    break;
-
-    case "on":
-    console.log("Reiniciar Parámetros");
-    break;
-
-    case "raiz":
-    if (Calculadora.numeroPantalla.innerHTML >=0){
-      Calculadora.raiz()
+  realizarOperacion: function(operador, operadorCalculadora) {
+    Calculadora.ultimoNumero = Calculadora.variableTemporal
+    /*Si el operando es "=" Verivicar que no hayan operaciones pendientes*/
+    if(operador== "=" && Calculadora.iniciarNumero==true){
+      this.verificarOperacion(operadorCalculadora) //realizar la operación con utilizando la última operacion realizada
+      Calculadora.resultado = resultado //Asignar el resultado como primer parametros
+      Calculadora.numeroPantalla.innerHTML = Calculadora.resultado //mostrar en pantalla el valor del resultado
+      Calculadora.operacionCompletada = true //Indicar que la operacion ha completado
+      Calculadora.iniciarNumero = true //Se espera nuevo operando
     }else{
-      console.log("No se puede calcular la raiz cuadrada de un numero negativo");
+      this.verificarOperacion(operador) //si hay operaciones pendientes se realizan primero
+      Calculadora.variableTemporal = "" //Variable Temporal Vacia.
+      Calculadora.ultimaOperacion = operador //Asignar el valor de la íltima operación seleccionada.
     }
-    break
+    Calculadora.numero = Calculadora.resultado //Se guarda el resltado para utilizarlo como operador en la siguiente cadena de operaciones.
+    Calculadora.ajustarResultado() //Verificar que el resultado no sea mayor de 8 caracteres
+  },
 
-    case ".":
-    console.log("decimal Habilitado"); //Mosrtar en cónsola activación del módulo decimal
-    break;
-
-    default:
-    Calculadora.numeroPantalla.innerHTML = "" //Mostrar pantalla vacia para iniciar nuevo operando
-    Calculadora.iniciarNumero = true //Se inicia un nuevo operando
-    //Condicional para permitir agregar mas operandos luego de presionar el boton igual
-    if(Calculadora.iniciarNumero == true && Calculadora.operacionCompletada == true && operador != "="){ //Verificar que se espera una nueva entrada, la ultima operacion ha terminado y la tecla seleccionada es diferente a igual
-      Calculadora.variableTemporal = ""; //Vaciar variable temporal
-      Calculadora.operacionCompletada = false //Indicar que la operacion no ha sido completada
-      Calculadora.ultimaOperacion = operador //Reemplazar la ultima operacion por la operacion actual
+  verificarOperacion: function(operador){
+    if(Calculadora.numero == "vacio") { //La calculadora se ha reiniciado
+      Calculadora.resultado = Calculadora.variableTemporal
     }else{
-      Calculadora.realizarOperacion(operador, operador) // se envian los parametros de operador y la operacion acual
-      Calculadora.operacionCompletada = false //Definir que la operacion no ha sido completada
-      Calculadora.decimal = false //Iniciar el nuevo operando sin propiedad decimal
-      //Calculadora.ultimaOperacion = "+"
+      if(Calculadora.operacionCompletada == true){ /*Verificar que no hayan operaciones completas*/
+        operaciones="("+ Calculadora.numero+ ")" +operador+ "(" +Calculadora.variableTemporal+ ")"; // escribimos la operación en una cadena de caracteres
+        resultado=eval(operaciones) //convertimos la cadena a código y resolvemos
+        Calculadora.resultado=resultado; //guardamos la solución
+        //console.log(Calculadora.resultado+operador+Calculadora.variableTemporal+"="+resultado);
+      }else{
+        operaciones="(" +Calculadora.numero+ ")" +Calculadora.ultimaOperacion+ "(" +Calculadora.variableTemporal+ ")"; // escribimos la operación en una cadena de caracteres
+        resultado=eval(operaciones) //convertimos la cadena a código y resolvemos
+        Calculadora.resultado=resultado; //Guardamos la solución
+      }
+      console.log(operaciones+"="+resultado); //Mostrar operación en pantalla
     }
-  }
-}
-},
+  },
+  ajustarResultado:function(){
+    pantalla = Calculadora.numeroPantalla.innerHTML
+    if(pantalla.length > 8){
+      var resultadoMaximo = pantalla.slice(0,8); //Obtener sólo los primeros 8 números de la cadena del resultado en pantalla
+      Calculadora.numeroPantalla.innerHTML = resultadoMaximo; //Mostrar el resultado en pantalla
+      Calculadora.numero = Calculadora.numeroPantalla.innerHTML
+    }
+  },
 
-realizarOperacion: function(operador, operadorCalculadora) {
-  Calculadora.ultimoNumero = Calculadora.variableTemporal
-  console.log("entrando a resultado");
-  if(operador== "=" && Calculadora.iniciarNumero==true){ //Si el operando es "=" Verivicar que no hayan operaciones pendientes
-  this.verificarOperacion(operadorCalculadora) //realizar la
-  Calculadora.numeroPantalla.innerHTML = Calculadora.resultado
-  Calculadora.operacionCompletada = true //Indicar que la operacion ha completado
-  Calculadora.iniciarNumero = true //Se espera nuevo operando
-  Calculadora.resultado = resultado //Asignar el resultado como primer parametros
-}else{
-  this.verificarOperacion(operador) //si hay operaciones pendientes se realizan primero
-  Calculadora.variableTemporal = "" //Variable Temporal Vacia.
-  Calculadora.ultimaOperacion = operador //Asignar el valor de la íltima operación seleccionada.
-}
-Calculadora.numero = Calculadora.resultado //Se guarda el resltado para utilizarlo como operador en la siguiente cadena de operaciones.
-Calculadora.ajustarResultado()
-},
+  cambiarSigno: function(){
+    var pantalla = Calculadora.numeroPantalla.innerHTML
+    if (pantalla != 0){
+      var resultadoSigno = Number(-Calculadora.numeroPantalla.innerHTML) //Asignar el numero en pantalla con signo opuesto
+      Calculadora.numeroPantalla.innerHTML = resultadoSigno //Mostrar en pantalla el numero con signo opuesto
+    }
 
-verificarOperacion: function(operador){
-  if(Calculadora.numero == "vacio") { //La calculadora se ha reiniciado
-    Calculadora.resultado = Calculadora.variableTemporal
-  }else{
-    /*if(Calculadora.operacionCompletada == true){
-      operaciones=Number(Calculadora.resultado)+operador+Number(Calculadora.variableTemporal); // escribimos la operación en una cadena
-      resultado=eval(operaciones) //convertimos la cadena a código y resolvemos
-      Calculadora.resultado=resultado; //guardamos la solución
-      //console.log(Calculadora.resultado+operador+Calculadora.variableTemporal+"="+resultado);
-    }else{*/
-      operaciones=Calculadora.numero+operador+Calculadora.variableTemporal; // escribimos la operación en una cadena
-      resultado=eval(operaciones) //convertimos la cadena a código y resolvemos
-      Calculadora.resultado=resultado; //Guardamos la solución
-    /*}*/console.log("Operacion no completada: "+Calculadora.numero+Calculadora.ultimaOperacion+Calculadora.variableTemporal+"="+resultado); //Mostrar operación en pantalla
-  }
-},
-ajustarResultado:function(){
-  pantalla = Calculadora.numeroPantalla.innerHTML
-  if(pantalla.length > 8){
-    var resultadoMaximo = pantalla.slice(0,8); //Obtener sólo los primeros 8 números de la cadena del resultado en pantalla
-    Calculadora.numeroPantalla.innerHTML = resultadoMaximo; //Mostrar el resultado en pantalla
-  }
-},
+    if(Calculadora.operacionCompletada == true && Calculadora.iniciarNumero == true){//Verificar que no hay operaciones pendientes
+      Calculadora.numero = resultadoSigno //Si no hay operaciones pendientes guardar el numero en pantalla como resultado
+      Calculadora.variableTemporal = resultadoSigno //Asignar el numero en pantalla como operando
+    }else if(Calculadora.operacionCompletada == false && Calculadora.iniciarNumero == false){ //Verificar que no hay operaciones pendientes y se puede continuar editando el numero
+      Calculadora.variableTemporal = resultadoSigno //Asignar en numero en pantalla como operando
+    }
+  },
 
-cambiarSigno: function(){
-  var pantalla = Calculadora.numeroPantalla.innerHTML
-  if (pantalla != 0){
-    //var resultadoSigno = - Calculadora.resultado
-    var resultadoSigno = Number(- Calculadora.numeroPantalla.innerHTML)
-    console.log(Number(resultadoSigno));
-    Calculadora.numeroPantalla.innerHTML = resultadoSigno
-    Calculadora.ultimoNumero = resultadoSigno
-    Calculadora.variableTemporal = resultadoSigno
-    Calculadora.numero = resultadoSigno
-  }
-  if(Calculadora.operacionCompletada == true && Calculadora.iniciarNumero == true){
-    Calculadora.resultado = - Calculadora.resultado
-    Calculadora.numeroPantalla.innerHTML = Calculadora.resultado
-
-  }else if(Calculadora.operacionCompletada == true && Calculadora.iniciarNumero == false){
-    Calculadora.variableTemporal = Calculadora.numeroPantalla.innerHTML;
-    Calculadora.ultimoNumero = Calculadora.numeroPantalla.innerHTML
-  }
-  operaciones=Calculadora.resultado+operador+Calculadora.variableTemporal; // escribimos la operación en una cadena
-  resultado=eval(operaciones) //convertimos la cadena a código y resolvemos
-  console.log(operaciones);
-  Calculadora.ultimaOperacion = "sign"
-  Calculadora.operacionCompletada = true;
-  Calculadora.iniciarNumero = true //Esperando nuevo operando
-},
-
-raiz: function () {
-         Calculadora.numeroPantalla.innerHTML=Math.sqrt(Calculadora.numeroPantalla.innerHTML) //resolver raíz cuadrada.
-         resultado = Calculadora.numeroPantalla.innerHTML
-         Calculadora.resultado = resultado
-         Calculadora.variableTemporal = resultado
-         Calculadora.numero = resultado
-         /*if(Calculadora.operacionCompletada == true && Calculadora.iniciarNumero == true){
-           Calculadora.resultado = Calculadora.resultado
-           Calculadora.numeroPantalla.innerHTML = Calculadora.resultado
-         }
-         if(Calculadora.operacionCompletada == true && Calculadora.iniciarNumero == false){
-           Calculadora.variableTemporal = Calculadora.numeroPantalla.innerHTML;
-           Calculadora.ultimoNumero = Calculadora.numeroPantalla.innerHTML
-         }*/
-         //Calculadora.numero = Calculadora.resultado
-         //Calculadora.ultimoNumero = Calculadora.numero
-         //Calculadora.Calculadora.variableTemporal = Calculadora.numero
-         Calculadora.ultimaOperacion = "raiz"
-         Calculadora.operacionCompletada = true;
-         Calculadora.iniciarNumero = false //Esperando nuevo operando
-         Calculadora.ajustarResultado()
-       },
+  raiz: function () {
+    Calculadora.numeroPantalla.innerHTML=Math.sqrt(Calculadora.numeroPantalla.innerHTML) //resolver raíz cuadrada.
+    resultadoRaiz = Calculadora.numeroPantalla.innerHTML //Asignar el numero en pantalla como resiltado
+    Calculadora.variableTemporal = resultadoRaiz //Asignar el valor del resultado de la raiz al operando actual
+    Calculadora.numero = resultadoRaiz //Asignar el resultado de la raiz a la variable resultado
+    Calculadora.ultimaOperacion = "raiz" //Asignar "raiz" como ultima operacion
+    Calculadora.operacionCompletada = true; //Terminar operacion
+    Calculadora.iniciarNumero = false //Esperando nuevo operando
+    Calculadora.ajustarResultado() //Ejecutar operacion ajustar resultado
+  },
 }
 Calculadora.init();
